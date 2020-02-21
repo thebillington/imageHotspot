@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bitmap: Bitmap
 
     private var selectedColour: Int? = null
+    private var initialColour: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         val options = BitmapFactory.Options()
         options.inMutable = true
 
-        bitmap = BitmapFactory.decodeResource(resources, R.drawable.body, options)
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.body_small, options)
         mBinding.bodyImage.setImageBitmap(bitmap)
 
         setupImageTouchInterceptor()
@@ -51,12 +52,10 @@ class MainActivity : AppCompatActivity() {
         selectedColour = bitmap.getPixel(initialX,initialY)
 
         if (selectedColour == 0) return
+        else if (initialColour == null) initialColour = selectedColour
 
-        var x = initialX
-        var y = initialY
-
-        fillRow(x,y,1)
-        fillRow(x,y-1,-1)
+        fillRow(initialX,initialY,1)
+        fillRow(initialX,initialY-1,-1)
 
     }
 
@@ -70,8 +69,8 @@ class MainActivity : AppCompatActivity() {
         x += 1
 
         while (bitmap.getPixel(x,y) == selectedColour) {
-            fillRow(x, y+1, dy)
-            bitmap.setPixel(x,y,Color.GREEN)
+            fillRow(x, y+dy, dy)
+            bitmap.setPixel(x,y,if (selectedColour == Color.GREEN) initialColour ?: Color.GREEN else Color.GREEN)
             x += 1
         }
     }
